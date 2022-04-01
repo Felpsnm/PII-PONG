@@ -14,7 +14,7 @@ public class Ball {
 		this.y = y;
 		this.width = 4; 
 		this.height = 4;
-		speed = 1.7;
+		speed = 2.0;
 		angle = new Random().nextInt(120-45)+ 46;
 		dx = Math.cos(Math.toRadians(angle));
 		dy = Math.sin(Math.toRadians(angle));
