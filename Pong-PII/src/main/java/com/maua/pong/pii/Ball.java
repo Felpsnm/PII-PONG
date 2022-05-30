@@ -7,70 +7,153 @@ import java.util.Random;
 
 public class Ball {
 
-    public double x, y, dx, dy, speed;
-    public int width, height;
-    public int angle;
-
+    private double x, y, dx, dy;
+    private final double speed;
+    private final int width, height;
+    private int angle;   
+    private Rectangle limites;
+    private Rectangle limitesPlayer;
+    private Rectangle limitesPlayer2;
+    private Rectangle limitesEnemy;
+    
+    //Construtor
     public Ball(int x, int y) {
         this.x = x;
         this.y = y;
         this.width = 4;
         this.height = 4;
-        speed = 1.7;
-        angle = new Random().nextInt(120 - 45);
-        dx = Math.cos(Math.toRadians(angle));
-        dy = Math.sin(Math.toRadians(angle));
+        this.speed = 1.7;
+        this.angle = new Random().nextInt(120 - 45);
+        this.dx = Math.cos(Math.toRadians(angle));
+        this.dy = Math.sin(Math.toRadians(angle));
+    }
+    
+    //Getters
+    public double getX() {
+        return x;
+    }
+    
+    public double getY() {
+        return y;
     }
 
+    public double getDx() {
+        return dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getAngle() {
+        return angle;
+    }
+
+    public Rectangle getLimites() {
+        return limites;
+    }
+
+    public Rectangle getLimitesPlayer() {
+        return limitesPlayer;
+    }
+
+    public Rectangle getLimitesPlayer2() {
+        return limitesPlayer2;
+    }
+
+    public Rectangle getLimitesEnemy() {
+        return limitesEnemy;
+    }
+    
+    //Setters
+    
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setDx(double dx) {
+        this.dx = dx;
+    }
+    
+    public void setDy(double dy) {
+        this.dy = dy;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+    }
+    
+    public void setLimites(Rectangle limites) {
+        this.limites = limites;
+    }
+
+    public void setLimitesPlayer(Rectangle limitesPlayer) {
+        this.limitesPlayer = limitesPlayer;
+    }
+
+    public void setLimitesPlayer2(Rectangle limitesPlayer2) {
+        this.limitesPlayer2 = limitesPlayer2;
+    }
+
+    public void setLimitesEnemy(Rectangle limitesEnemy) {
+        this.limitesEnemy = limitesEnemy;
+    }
+    
+    
+    
     private void colisaoBola() {
         //Colisão lateral
-        if (x + (dx * speed) + width >= Game.gameWidth || x + (dx * speed) < 0) {
-            dx *= -1;
+        if (getX() + (getDx() * getSpeed()) + getSpeed() >= Game.getGameWidth() || getX() + (getDx() * getSpeed()) < 0) {
+            setDx(getDx() * -1);
         }
 
         //Colisão objetos
-        Rectangle bounds = new Rectangle((int) (x + (dx * speed)), (int) (y + (dy * speed)), width, height);
-        Rectangle boundsPlayer = new Rectangle(Game.player.x, Game.player.y, Game.player.width, Game.player.height);
-        Rectangle boundsPlayer2 = new Rectangle((int) Game.player2.x, (int) Game.player2.y, Game.player2.width, Game.player2.height);
-        Rectangle boundsEnemy = new Rectangle((int) Game.enemy.x, (int) Game.enemy.y, Game.enemy.width, Game.enemy.height);
+        setLimites(new Rectangle((int) (getX() + (getDx() * getSpeed())), (int) (getY() + (getDy() * getSpeed())), getWidth(), getHeight()));
+        setLimitesPlayer(new Rectangle(Game.getPlayer().getX(), Game.getPlayer().getY(), Game.getPlayer().getWidth(), Game.getPlayer().getHeight()));
+        setLimitesPlayer2(new Rectangle((int) Game.getPlayer2().getX(), (int) Game.getPlayer2().getY(), Game.getPlayer2().getWidth(), Game.getPlayer2().getHeight()));
+        setLimitesEnemy(new Rectangle((int) Game.getEnemy().getX(), (int) Game.getEnemy().getY(), Game.getEnemy().getWidth(), Game.getEnemy().getHeight()));
 
-        if (bounds.intersects(boundsPlayer)) {
-            angle = new Random().nextInt(120 - 45) + 46;
-            dx = Math.cos(Math.toRadians(angle));
-            dy = Math.sin(Math.toRadians(angle));
-            if (dy > 0) {
-                dy *= -1;
+        if (getLimites().intersects(getLimitesPlayer())) {
+            setAngle(new Random().nextInt(120 - 45) + 46);
+            setDx(Math.cos(Math.toRadians(getAngle())));
+            setDy(Math.sin(Math.toRadians(getAngle())));
+            if (getDy() > 0) {
+                setDy(getDy() * -1);
             }
-        }
-        if (Game.gameState == "SINGLEPLAYER") {
-            if (bounds.intersects(boundsEnemy)) {
-                angle = new Random().nextInt(120 - 45) + 46;
-                dx = Math.cos(Math.toRadians(angle));
-                dy = Math.sin(Math.toRadians(angle));
-                if (dy < 0) {
-                    dy *= -1;
-                }
-            }
-        } else if (Game.gameState == "COOP") {
-            if (bounds.intersects(boundsPlayer2)) {
-                angle = new Random().nextInt(120 - 45) + 46;
-                dx = Math.cos(Math.toRadians(angle));
-                dy = Math.sin(Math.toRadians(angle));
-                if (dy < 0) {
-                    dy *= -1;
-                }
+        } else if (getLimites().intersects(getLimitesEnemy()) || getLimites().intersects(getLimitesPlayer2())) {
+            setAngle(new Random().nextInt(120 - 45) + 46);
+            setDx(Math.cos(Math.toRadians(getAngle())));
+            setDy(Math.sin(Math.toRadians(getAngle())));
+            if (getDy() < 0) {
+                setDy(getDy() * -1);
             }
         }
     }
 
     private void movimentoBola() {
-        x += dx * speed;
-        y += dy * speed;
+        setX(getX() + (getDx() * getSpeed()));
+        setY(getY() + (getDy() * getSpeed()));
     }
 
     private void renderizacaoBola(Graphics g) {
         g.setColor(Color.yellow);
-        g.fillRect((int) x, (int) y, width, height);
+        g.fillRect((int) getX(), (int) getY(), getWidth(), getHeight());
     }
 
     public void tick() {

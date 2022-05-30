@@ -6,31 +6,53 @@ import java.awt.Font;
 
 public class Quiz {
 
-    public boolean player = true;
-    public boolean player2 = false;
-    public boolean enemy = false;
+    private boolean player = false;
+    private boolean player2orEnemy = false;
+    
+    //Construtor
+    public Quiz() {
+    }
+    
+    //Getters
+    public boolean isPlayer() {
+        return player;
+    }
 
+    public boolean isPlayer2orEnemy() {
+        return player2orEnemy;
+    }
+    
+    //Setters
+    public void setPlayer(boolean player) {
+        this.player = player;
+    }
+
+    public void setPlayer2orEnemy(boolean player2orEnemy) {
+        this.player2orEnemy = player2orEnemy;
+    }
+    
     private String pergunta(int i) {
         String pergunta[] = {"Eu sou uma pergunta"};
 
         return pergunta[i];
     }
-
+    
+    //Métodos
     private void renderizacaoQuiz(Graphics g) {
         g.setColor(new Color(255, 255, 255, 100));
-        g.fillRect(0, 0, Game.gameWidth * Game.gameScale, Game.gameHeight * Game.gameScale);
+        g.fillRect(0, 0, Game.getGameWidthStaggered(), Game.getGameHeightStaggered());
 
         g.setColor(Color.green);
         g.setFont(new Font("arial", Font.PLAIN, 10));
-        if (player) {
-            g.drawString(">--QUIZ | Player 1--<", (Game.gameWidth * Game.gameScale / 2 - 207), (Game.gameHeight * Game.gameScale) / 2 - 165);
-        } else if (player2) {
-            g.drawString(">--QUIZ | Player 2--<", (Game.gameWidth * Game.gameScale / 2 - 207), (Game.gameHeight * Game.gameScale) / 2 - 165);
+        if (isPlayer()) {
+            g.drawString(">--QUIZ | Player 1--<", (Game.getGameWidthStaggered() / 2 - 207), (Game.getGameHeightStaggered()) / 2 - 165);
+        } else if (isPlayer2orEnemy()) {
+            g.drawString(">--QUIZ | Player 2--<", (Game.getGameWidthStaggered() / 2 - 207), (Game.getGameHeightStaggered()) / 2 - 165);
         }
 
         g.setFont(new Font("arial", Font.PLAIN, 9));
 
-        g.drawString(pergunta(0), (Game.gameWidth * Game.gameScale / 2 - 200), (Game.gameHeight * Game.gameScale) / 2 - 140);
+        g.drawString(pergunta(0), (Game.getGameWidthStaggered() / 2 - 200), (Game.getGameHeightStaggered()) / 2 - 140);
 
     }
 

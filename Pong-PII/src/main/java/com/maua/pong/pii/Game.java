@@ -11,24 +11,36 @@ import java.awt.image.BufferedImage;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 
-    public static int gameWidth = 160, gameHeight = 120, gameScale = 3;
-    public int pontosPlayer = 0;
-    public int pontosPlayer2Enemy = 0;
+    private static int gameWidth, gameHeight, gameScale, gameWidthStaggered, gameHeightStaggered;
+    private int pontosPlayer;
+    private int pontosPlayer2orEnemy;
+    private static String gameState = "MENU";;
 
-    public static Player player;
-    public static Player2 player2;
-    public static Enemy enemy;
-    public static Ball ball;
-    private final Menu menu;
-    public static Quiz quiz;
+    private static Player player;
+    private static Player2 player2;
+    private static Enemy enemy;
+    private static Ball ball;
+    private static Menu menu;
+    private static Quiz quiz;
+    private static BufferedImage layer;
 
-    private final BufferedImage layer;
-
-    public static String gameState = "MENU";
-
+    //Construtor 
     public Game() {
-        this.setPreferredSize(new Dimension(gameWidth * gameScale, gameHeight * gameScale));
-        this.addKeyListener(this);
+        //Tamanhos do Game
+        gameWidth = 160;
+        gameHeight = 120;
+        gameScale = 3;
+        gameWidthStaggered = gameWidth * gameScale;
+        gameHeightStaggered = gameHeight * gameScale;
+
+        //Definindo Variáveis do Jogo
+        pontosPlayer = 0;
+        pontosPlayer2orEnemy = 0;
+
+        setPreferredSize(new Dimension(gameWidthStaggered, gameHeightStaggered));
+        addKeyListener(this);
+
+        //Instanciando objetos
         layer = new BufferedImage(gameWidth, gameHeight, BufferedImage.TYPE_INT_RGB);
         player = new Player(100, gameHeight - 5);
         player2 = new Player2(100, 0);
@@ -38,23 +50,92 @@ public class Game extends Canvas implements Runnable, KeyListener {
         quiz = new Quiz();
     }
 
-    private void verificarGol() {
-        if (ball.y >= gameHeight) {
-            pontosPlayer2Enemy += 1;
-            if (gameState == "COOP") {
-                Game.gameState = "QUIZ";
-                quiz.player = true;
-            } else {
-                new Game();
-            }
-        } else if (ball.y < 0) {
-            pontosPlayer += 1;
-            Game.gameState = "QUIZ";
-            quiz.player2 = true;
-        }
-        System.out.println("Player 1: " + pontosPlayer + " Player 2: " + pontosPlayer2Enemy);
+    //Setters
+    public void setPontosPlayer(int pontosPlayer) {
+        this.pontosPlayer = pontosPlayer;
     }
 
+    public void setPontosPlayer2orEnemy(int pontosPlayer2orEnemy) {
+        this.pontosPlayer2orEnemy = pontosPlayer2orEnemy;
+    }
+
+    public static void setGameState(String gameState) {
+        Game.gameState = gameState;
+    }
+
+    //Getters
+    public int getPontosPlayer() {
+        return pontosPlayer;
+    }
+
+    public int getPontosPlayer2orEnemy() {
+        return pontosPlayer2orEnemy;
+    }
+
+    public String getGameState() {
+        return gameState;
+    }
+
+    public static int getGameWidth() {
+        return gameWidth;
+    }
+
+    public static int getGameHeight() {
+        return gameHeight;
+    }
+
+    public static int getGameWidthStaggered() {
+        return gameWidthStaggered;
+    }
+
+    public static int getGameHeightStaggered() {
+        return gameHeightStaggered;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static Player2 getPlayer2() {
+        return player2;
+    }
+
+    public static Enemy getEnemy() {
+        return enemy;
+    }
+
+    public static Ball getBall() {
+        return ball;
+    }
+
+    public static Menu getMenu() {
+        return menu;
+    }
+
+    public static Quiz getQuiz() {
+        return quiz;
+    }
+
+    //Métodos
+    //Verificação dos gols
+    private void verificarGol() {
+        if (ball.getY() >= getGameHeight()) {
+            setPontosPlayer2orEnemy(getPontosPlayer2orEnemy() + 1);
+            Game.setGameState("QUIZ");
+            quiz.setPlayer(true);
+        } else if (ball.getY() < 0) {
+            setPontosPlayer(getPontosPlayer() + 1);
+            if (this.getGameState() == "COOP") {
+                Game.setGameState("QUIZ");
+                quiz.setPlayer2orEnemy(true);
+            } else {
+                Main.createGameInstance();
+            }
+        }
+        System.out.println("Player 1: " + pontosPlayer + " Player 2: " + pontosPlayer2orEnemy);
+    }
+
+    //Execução dos Ticks
     private void execTicks() {
         if (null != gameState) {
             switch (gameState) {
@@ -74,12 +155,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
                 }
                 case "QUIZ" ->
                     quiz.tick();
-                default -> {
-                }
             }
         }
     }
 
+    //Execução da renderização
     private void execRenders() {
         BufferStrategy bs = this.getBufferStrategy();
         if (bs == null) {
@@ -106,12 +186,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
                 }
                 case "QUIZ" ->
                     quiz.render(g);
-                default -> {
-                }
             }
         }
         g = bs.getDrawGraphics();
-        g.drawImage(layer, 0, 0, gameWidth * gameScale, gameHeight * gameScale, null);
+        g.drawImage(layer, 0, 0, gameWidthStaggered, gameHeightStaggered, null);
         bs.show();
     }
 
@@ -130,42 +208,50 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            menu.up = true;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            menu.down = true;
-        }
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP -> {
+                menu.setUp(true);
+            }
+            case KeyEvent.VK_DOWN -> {
+                menu.setDown(true);
+            }
+            case KeyEvent.VK_ENTER -> {
+                menu.setEnter(true);
+            }
 
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            menu.enter = true;
-        }
-
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            player.right = true;
-        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            player.left = true;
-        }
-
-        if (e.getKeyCode() == KeyEvent.VK_D) {
-            player2.right = true;
-        } else if (e.getKeyCode() == KeyEvent.VK_A) {
-            player2.left = true;
+            case KeyEvent.VK_RIGHT -> {
+                player.setRight(true);
+            }
+            case KeyEvent.VK_LEFT -> {
+                player.setLeft(true);
+            }
+            case KeyEvent.VK_D -> {
+                player2.setRight(true);
+            }
+            case KeyEvent.VK_A -> {
+                player2.setLeft(true);
+            }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            player.right = false;
-        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            player.left = false;
-        }
+        switch (e.getKeyCode()) {
+            //Player 1
+            case KeyEvent.VK_RIGHT -> {
+                player.setRight(false);
+            }
+            case KeyEvent.VK_LEFT -> {
+                player.setLeft(false);
+            }
 
-        if (e.getKeyCode() == KeyEvent.VK_D) {
-            player2.right = false;
-        } else if (e.getKeyCode() == KeyEvent.VK_A) {
-            player2.left = false;
+            //Player 2
+            case KeyEvent.VK_D -> {
+                player2.setRight(false);
+            }
+            case KeyEvent.VK_A -> {
+                player2.setLeft(false);
+            }
         }
     }
 

@@ -5,9 +5,9 @@ import java.awt.Graphics;
 
 public class Player2 {
 
-    public boolean right, left;
-    public double x, y;
-    public int width, height;
+    private boolean right, left;
+    private double x, y;
+    private int width, height;
 
     public Player2(int x, int y) {
         this.x = x;
@@ -16,22 +16,70 @@ public class Player2 {
         this.height = 5;
     }
 
+    public boolean isRight() {
+        return right;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+    
     private void player2Movement() {
-        if (right) {
-            x++;
-        } else if (left) {
-            x--;
+        if (isRight()) {
+            setX(getX() + 1);
+        } else if (isLeft()) {
+            setX(getX() - 1);
         }
-        if (x + width > Game.gameWidth) {
-            x = Game.gameWidth - width;
-        } else if (x < 0) {
-            x = 0;
+        if (getX() + getWidth() > Game.getGameWidth()) {
+            setX(Game.getGameWidth() - getWidth());
+        } else if (getX() < 0) {
+            setX(0);
         }
     }
 
     private void renderizacaoPlayer2(Graphics g) {
         g.setColor(Color.magenta);
-        g.fillRect((int) x, (int) y, width, height);
+        g.fillRect((int) getX(), (int) getY(), getWidth(), getHeight());
     }
 
     public void tick() {
