@@ -1,31 +1,18 @@
-
 package com.maua.pong.pii;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class ConnectionFactory {
-    private final String usuario;
-    private final String senha;
-    private final String host;
-    private final String porta;
-    private final String bd;
 
-    public ConnectionFactory() {
-        this.bd = "db_quiz";
-        this.porta = "3306";
-        this.usuario = "root";
-        this.senha = "1234";
-        this.host = "localhost";
-    }
+    private static String usuario = "root";
+    private static String senha = "1234";
+    private static String host = "localhost";
+    private static String porta = "3306";
+    private static String bd = "dbquiz";
 
-    public Connection obtemConexao() {
-        try {
-            Connection c = DriverManager.getConnection("jdbc:mysql://" + host + ":" + porta + "/" + bd, usuario, senha);
-            return c;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static Connection obtemConexao() throws Exception {
+        String url = String.format("jdbc:mysql://%s:%s/%s", host, porta, bd);
+        return DriverManager.getConnection(url, usuario, senha);
     }
 }

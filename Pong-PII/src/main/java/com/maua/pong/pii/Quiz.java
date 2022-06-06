@@ -1,66 +1,64 @@
 package com.maua.pong.pii;
 
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Font;
-
 public class Quiz {
 
-    private boolean player = false;
-    private boolean player2orEnemy = false;
+    private static boolean player;
+    private static boolean player2;
     
-    //Construtor
+    private static QuizTela quizTela;
+    private static DAOPergunta daoPergunta;
+
     public Quiz() {
+        player = false;
+        player2 = false;
+        daoPergunta = new DAOPergunta();
+        quizTela = new QuizTela();
+        
     }
-    
+
     //Getters
-    public boolean isPlayer() {
+    public static boolean isPlayer() {
         return player;
     }
 
-    public boolean isPlayer2orEnemy() {
-        return player2orEnemy;
+    public static boolean isPlayer2() {
+        return player2;
     }
     
+
     //Setters
     public void setPlayer(boolean player) {
         this.player = player;
     }
 
-    public void setPlayer2orEnemy(boolean player2orEnemy) {
-        this.player2orEnemy = player2orEnemy;
+    public void setPlayer2(boolean player2) {
+        this.player2 = player2;
     }
-    
-    private String pergunta(int i) {
-        String pergunta[] = {"Eu sou uma pergunta"};
 
-        return pergunta[i];
-    }
-    
     //Métodos
-    private void renderizacaoQuiz(Graphics g) {
-        g.setColor(new Color(255, 255, 255, 100));
-        g.fillRect(0, 0, Game.getGameWidthStaggered(), Game.getGameHeightStaggered());
-
-        g.setColor(Color.green);
-        g.setFont(new Font("arial", Font.PLAIN, 10));
-        if (isPlayer()) {
-            g.drawString(">--QUIZ | Player 1--<", (Game.getGameWidthStaggered() / 2 - 207), (Game.getGameHeightStaggered()) / 2 - 165);
-        } else if (isPlayer2orEnemy()) {
-            g.drawString(">--QUIZ | Player 2--<", (Game.getGameWidthStaggered() / 2 - 207), (Game.getGameHeightStaggered()) / 2 - 165);
-        }
-
-        g.setFont(new Font("arial", Font.PLAIN, 9));
-
-        g.drawString(pergunta(0), (Game.getGameWidthStaggered() / 2 - 200), (Game.getGameHeightStaggered()) / 2 - 140);
-
+    public static String getPergunta() {
+        return daoPergunta.obterPergunta().getPergunta();
     }
-
-    public void tick() {
-
+    
+    public static String getAlternativa1() {
+        return daoPergunta.obterPergunta().getAlternativa1();
     }
-
-    public void render(Graphics g) {
-        renderizacaoQuiz(g);
+    
+    public static String getAlternativa2() {
+        return daoPergunta.obterPergunta().getAlternativa2();
     }
+    
+    public static String getAlternativa3() {
+        return daoPergunta.obterPergunta().getAlternativa3();
+    }
+    
+    public static String getResposta() {
+        return daoPergunta.obterPergunta().getResposta();
+    }
+    
+    public static void renderizacaoQuiz() {
+        quizTela.setVisible(true);
+    }
+    
+
 }

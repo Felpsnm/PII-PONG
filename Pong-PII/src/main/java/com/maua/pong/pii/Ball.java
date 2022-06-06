@@ -12,9 +12,7 @@ public class Ball {
     private final int width, height;
     private int angle;   
     private Rectangle limites;
-    private Rectangle limitesPlayer;
-    private Rectangle limitesPlayer2;
-    private Rectangle limitesEnemy;
+    
     
     //Construtor
     public Ball(int x, int y) {
@@ -26,6 +24,7 @@ public class Ball {
         this.angle = new Random().nextInt(120 - 45);
         this.dx = Math.cos(Math.toRadians(angle));
         this.dy = Math.sin(Math.toRadians(angle));
+        colisaoBola();
     }
     
     //Getters
@@ -64,21 +63,8 @@ public class Ball {
     public Rectangle getLimites() {
         return limites;
     }
-
-    public Rectangle getLimitesPlayer() {
-        return limitesPlayer;
-    }
-
-    public Rectangle getLimitesPlayer2() {
-        return limitesPlayer2;
-    }
-
-    public Rectangle getLimitesEnemy() {
-        return limitesEnemy;
-    }
     
-    //Setters
-    
+    //Setters  
     public void setX(double x) {
         this.x = x;
     }
@@ -102,48 +88,9 @@ public class Ball {
     public void setLimites(Rectangle limites) {
         this.limites = limites;
     }
-
-    public void setLimitesPlayer(Rectangle limitesPlayer) {
-        this.limitesPlayer = limitesPlayer;
-    }
-
-    public void setLimitesPlayer2(Rectangle limitesPlayer2) {
-        this.limitesPlayer2 = limitesPlayer2;
-    }
-
-    public void setLimitesEnemy(Rectangle limitesEnemy) {
-        this.limitesEnemy = limitesEnemy;
-    }
-    
-    
     
     private void colisaoBola() {
-        //Colisão lateral
-        if (getX() + (getDx() * getSpeed()) + getSpeed() >= Game.getGameWidth() || getX() + (getDx() * getSpeed()) < 0) {
-            setDx(getDx() * -1);
-        }
-
-        //Colisão objetos
         setLimites(new Rectangle((int) (getX() + (getDx() * getSpeed())), (int) (getY() + (getDy() * getSpeed())), getWidth(), getHeight()));
-        setLimitesPlayer(new Rectangle(Game.getPlayer().getX(), Game.getPlayer().getY(), Game.getPlayer().getWidth(), Game.getPlayer().getHeight()));
-        setLimitesPlayer2(new Rectangle((int) Game.getPlayer2().getX(), (int) Game.getPlayer2().getY(), Game.getPlayer2().getWidth(), Game.getPlayer2().getHeight()));
-        setLimitesEnemy(new Rectangle((int) Game.getEnemy().getX(), (int) Game.getEnemy().getY(), Game.getEnemy().getWidth(), Game.getEnemy().getHeight()));
-
-        if (getLimites().intersects(getLimitesPlayer())) {
-            setAngle(new Random().nextInt(120 - 45) + 46);
-            setDx(Math.cos(Math.toRadians(getAngle())));
-            setDy(Math.sin(Math.toRadians(getAngle())));
-            if (getDy() > 0) {
-                setDy(getDy() * -1);
-            }
-        } else if (getLimites().intersects(getLimitesEnemy()) || getLimites().intersects(getLimitesPlayer2())) {
-            setAngle(new Random().nextInt(120 - 45) + 46);
-            setDx(Math.cos(Math.toRadians(getAngle())));
-            setDy(Math.sin(Math.toRadians(getAngle())));
-            if (getDy() < 0) {
-                setDy(getDy() * -1);
-            }
-        }
     }
 
     private void movimentoBola() {

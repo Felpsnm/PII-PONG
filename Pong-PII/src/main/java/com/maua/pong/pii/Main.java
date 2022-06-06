@@ -3,10 +3,10 @@ package com.maua.pong.pii;
 import javax.swing.JFrame;
 
 public class Main {
-    private static Game game;
+    public static Game game;
 
     public static void main(String[] args) {
-        createGameInstance();
+        createGameInstance(0, 0);
         JFrame frame = new JFrame("Pong");
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,7 +17,8 @@ public class Main {
         new Thread(game).start();
     }
     
-    public static void createGameInstance() {
-        game = new Game();
+    public static void createGameInstance(int pontosPlayer, int pontosPlayer2) {
+        game = new Game(pontosPlayer, pontosPlayer2);
+        
     }
 }

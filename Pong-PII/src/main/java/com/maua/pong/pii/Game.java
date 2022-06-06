@@ -8,24 +8,24 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 
     private static int gameWidth, gameHeight, gameScale, gameWidthStaggered, gameHeightStaggered;
-    private int pontosPlayer;
-    private int pontosPlayer2orEnemy;
-    private static String gameState = "MENU";;
+    private static int pontosPlayer;
+    private static int pontosPlayer2;
+    private static String gameState = "MENU";
+    private static int freezeGame = 0;
 
-    private static Player player;
-    private static Player2 player2;
-    private static Enemy enemy;
+    private static Player player, player2, enemy;
     private static Ball ball;
     private static Menu menu;
     private static Quiz quiz;
     private static BufferedImage layer;
 
     //Construtor 
-    public Game() {
+    public Game(int pontosPlayer, int pontosPlayer2) {
         //Tamanhos do Game
         gameWidth = 160;
         gameHeight = 120;
@@ -35,44 +35,48 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
         //Definindo Variáveis do Jogo
         pontosPlayer = 0;
-        pontosPlayer2orEnemy = 0;
+        pontosPlayer2 = 0;
 
         setPreferredSize(new Dimension(gameWidthStaggered, gameHeightStaggered));
         addKeyListener(this);
 
         //Instanciando objetos
         layer = new BufferedImage(gameWidth, gameHeight, BufferedImage.TYPE_INT_RGB);
-        player = new Player(100, gameHeight - 5);
-        player2 = new Player2(100, 0);
-        enemy = new Enemy(100, 0);
-        ball = new Ball(100, gameHeight / 2 - 1);
         menu = new Menu();
+        ball = new Ball(100, gameHeight / 2 - 1);
+        player = new Player(100, gameHeight - 5, 0, Color.blue);
+        player2 = new Player(100, 0, 0, Color.yellow);
+        enemy = new Player(100, 0, 1, Color.red);
         quiz = new Quiz();
     }
 
     //Setters
-    public void setPontosPlayer(int pontosPlayer) {
-        this.pontosPlayer = pontosPlayer;
+    public static void setPontosPlayer(int pontosPlayer) {
+        Game.pontosPlayer = pontosPlayer;
     }
 
-    public void setPontosPlayer2orEnemy(int pontosPlayer2orEnemy) {
-        this.pontosPlayer2orEnemy = pontosPlayer2orEnemy;
+    public static void setPontosPlayer2(int pontosPlayer2) {
+        Game.pontosPlayer2 = pontosPlayer2;
     }
 
     public static void setGameState(String gameState) {
         Game.gameState = gameState;
     }
 
+    public static void setFreezeGame(int freezeGame) {
+        Game.freezeGame = freezeGame;
+    }
+
     //Getters
-    public int getPontosPlayer() {
+    public static int getPontosPlayer() {
         return pontosPlayer;
     }
 
-    public int getPontosPlayer2orEnemy() {
-        return pontosPlayer2orEnemy;
+    public static int getPontosPlayer2() {
+        return pontosPlayer2;
     }
 
-    public String getGameState() {
+    public static String getGameState() {
         return gameState;
     }
 
@@ -92,86 +96,109 @@ public class Game extends Canvas implements Runnable, KeyListener {
         return gameHeightStaggered;
     }
 
-    public static Player getPlayer() {
-        return player;
+    public static int getFreezeGame() {
+        return freezeGame;
     }
 
-    public static Player2 getPlayer2() {
-        return player2;
+//------------Métodos
+    //Verificação das colisões
+    private void verificarColisao() {
+        //Colisão lateral
+        if (ball.getX() + (ball.getDx() * ball.getSpeed()) + ball.getSpeed() >= getGameWidth() || ball.getX() + (ball.getDx() * ball.getSpeed()) < 0) {
+            ball.setDx(ball.getDx() * -1);
+        }
+
+        //Colisões Gerais
+        if (ball.getLimites().intersects(player.getLimites())) {
+            ball.setAngle(new Random().nextInt(120 - 45) + 46);
+            ball.setDx(Math.cos(Math.toRadians(ball.getAngle())));
+            ball.setDy(Math.sin(Math.toRadians(ball.getAngle())));
+            if (ball.getDy() > 0) {
+                ball.setDy(ball.getDy() * -1);
+            }
+        }
+        if (ball.getLimites().intersects(enemy.getLimites()) || ball.getLimites().intersects(player2.getLimites())) {
+            ball.setAngle(new Random().nextInt(120 - 45) + 46);
+            ball.setDx(Math.cos(Math.toRadians(ball.getAngle())));
+            ball.setDy(Math.sin(Math.toRadians(ball.getAngle())));
+            if (ball.getDy() < 0) {
+                ball.setDy(ball.getDy() * -1);
+            }
+        }
     }
 
-    public static Enemy getEnemy() {
-        return enemy;
-    }
-
-    public static Ball getBall() {
-        return ball;
-    }
-
-    public static Menu getMenu() {
-        return menu;
-    }
-
-    public static Quiz getQuiz() {
-        return quiz;
-    }
-
-    //Métodos
     //Verificação dos gols
     private void verificarGol() {
         if (ball.getY() >= getGameHeight()) {
-            setPontosPlayer2orEnemy(getPontosPlayer2orEnemy() + 1);
-            Game.setGameState("QUIZ");
+            adicionarPontoPlayer2();
+            Main.createGameInstance(pontosPlayer, pontosPlayer2);
+            setFreezeGame(1);
+            quiz.renderizacaoQuiz();
             quiz.setPlayer(true);
         } else if (ball.getY() < 0) {
-            setPontosPlayer(getPontosPlayer() + 1);
-            if (this.getGameState() == "COOP") {
-                Game.setGameState("QUIZ");
-                quiz.setPlayer2orEnemy(true);
-            } else {
-                Main.createGameInstance();
+            adicionarPontoPlayer();
+            Main.createGameInstance(pontosPlayer, pontosPlayer2);
+            setFreezeGame(1);
+            quiz.renderizacaoQuiz();
+            if (getGameState() == "COOP") {
+                quiz.setPlayer2(true);
             }
         }
-        System.out.println("Player 1: " + pontosPlayer + " Player 2: " + pontosPlayer2orEnemy);
+        System.out.println("Player 1: " + getPontosPlayer() + " Player 2: " + getPontosPlayer2());
+    }
+
+    //Adicionar ponto Player
+    public static void adicionarPontoPlayer() {
+        setPontosPlayer(Game.getPontosPlayer() + 1);
+    }
+
+    //Adicionar ponto Player2
+    public static void adicionarPontoPlayer2() {
+        setPontosPlayer2(getPontosPlayer2() + 1);
+    }
+
+    //Obtendo posição atual da bola
+    public static double obterPosicaoBola() {
+        return ball.getX();
     }
 
     //Execução dos Ticks
     private void execTicks() {
-        if (null != gameState) {
-            switch (gameState) {
-                case "MENU" ->
+        if (getFreezeGame() == 0) {
+            switch (getGameState()) {
+                case "MENU" -> {
                     menu.tick();
+                    break;
+                }
                 case "SINGLEPLAYER" -> {
                     player.tick();
                     enemy.tick();
                     ball.tick();
-                    verificarGol();
                 }
                 case "COOP" -> {
                     player.tick();
                     player2.tick();
                     ball.tick();
-                    verificarGol();
                 }
-                case "QUIZ" ->
-                    quiz.tick();
             }
+            verificarColisao();
+            verificarGol();
         }
     }
 
     //Execução da renderização
     private void execRenders() {
-        BufferStrategy bs = this.getBufferStrategy();
-        if (bs == null) {
-            this.createBufferStrategy(3);
-            return;
-        }
-        Graphics g = layer.getGraphics();
-        g.setColor(Color.black);
-        g.fillRect(0, 0, gameWidth, gameHeight);
+        if (getFreezeGame() == 0) {
+            BufferStrategy bs = this.getBufferStrategy();
+            if (bs == null) {
+                this.createBufferStrategy(3);
+                return;
+            }
+            Graphics g = layer.getGraphics();
+            g.setColor(Color.black);
+            g.fillRect(0, 0, getGameWidth(), getGameHeight());
 
-        if (null != gameState) {
-            switch (gameState) {
+            switch (getGameState()) {
                 case "MENU" ->
                     menu.render(g);
                 case "SINGLEPLAYER" -> {
@@ -184,13 +211,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
                     player2.render(g);
                     ball.render(g);
                 }
-                case "QUIZ" ->
-                    quiz.render(g);
             }
+            g = bs.getDrawGraphics();
+            g.drawImage(layer, 0, 0, getGameWidthStaggered(), getGameHeightStaggered(), null);
+            bs.show();
         }
-        g = bs.getDrawGraphics();
-        g.drawImage(layer, 0, 0, gameWidthStaggered, gameHeightStaggered, null);
-        bs.show();
     }
 
     @Override
