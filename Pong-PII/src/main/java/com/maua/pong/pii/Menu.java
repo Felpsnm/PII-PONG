@@ -10,14 +10,12 @@ public class Menu {
     private int currentOption;
     private final int maxOption;
     private boolean down, up, enter;
-    private boolean pause;
     
     //Construtor
     public Menu() {
         options = new String[]{"um jogador", "dois jogadores", "sair"};
         currentOption = 0;
-        maxOption = options.length - 1;
-        pause = false;        
+        maxOption = options.length - 1;       
     }
     
     //Getters
@@ -65,13 +63,12 @@ public class Menu {
             switch (options[currentOption]) {
                 case "um jogador" -> {
                     Game.setGameState("SINGLEPLAYER");
-                    pause = false;
                 }
                 case "dois jogadores" -> {
                     Game.setGameState("COOP");
-                    pause = false;
                 }
                 case "sair" -> {
+                    Game.setGameState("CLOSE");
                 }
             }
         }       
@@ -90,13 +87,9 @@ public class Menu {
         //Opções
         g.setColor(Color.yellow);
         g.setFont(new Font("arial", Font.BOLD, 10));
-        if (pause == false) {
-            g.drawString("Um Jogador", (Game.getGameWidthStaggered()) / 2 - 205, (Game.getGameHeightStaggered()) / 2 - 150);
-        }
-        if (pause == false) {
-            g.drawString("Dois Jogadores", (Game.getGameWidthStaggered()) / 2 - 205, (Game.getGameHeightStaggered()) / 2 - 140);
-        }
-
+        
+        g.drawString("Um Jogador", (Game.getGameWidthStaggered()) / 2 - 205, (Game.getGameHeightStaggered()) / 2 - 150);
+        g.drawString("Dois Jogadores", (Game.getGameWidthStaggered()) / 2 - 205, (Game.getGameHeightStaggered()) / 2 - 140);
         g.drawString("Sair", (Game.getGameWidthStaggered()) / 2 - 205, (Game.getGameHeightStaggered()) / 2 - 130);
 
         switch (options[currentOption]) {

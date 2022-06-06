@@ -52,7 +52,7 @@ public class Quiz {
         return daoPergunta.obterPergunta().getAlternativa3();
     }
     
-    public static String getResposta() {
+    public static int getResposta() {
         return daoPergunta.obterPergunta().getResposta();
     }
     

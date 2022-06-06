@@ -12,7 +12,7 @@ public class DAOPergunta {
 
     public Pergunta obterPergunta() {
         String sql = "SELECT * FROM Quiz WHERE idPerguntas = ?";
-        try ( Connection conn = ConnectionFactory.obtemConexao();  PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.obtemConexao(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, numero);
                 try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
@@ -20,7 +20,7 @@ public class DAOPergunta {
                 String alternativa1 = rs.getString("Alternativa1");
                 String alternativa2 = rs.getString("Alternativa2");
                 String alternativa3 = rs.getString("Alternativa3");
-                String resposta = rs.getString("Resposta");
+                int resposta = rs.getInt("Resposta");
                 p.setPergunta(pergunta);
                 p.setAlternativa1(alternativa1);
                 p.setAlternativa2(alternativa2);

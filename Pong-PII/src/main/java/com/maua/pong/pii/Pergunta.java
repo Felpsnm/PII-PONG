@@ -5,7 +5,7 @@ public class Pergunta {
     private String alternativa1;
     private String alternativa2;
     private String Alternativa3;
-    private String Resposta;
+    private int Resposta;
     
     public String getPergunta() {
         return perguntas;
@@ -23,7 +23,7 @@ public class Pergunta {
         return Alternativa3;
     }
 
-    public String getResposta() {
+    public int getResposta() {
         return Resposta;
     }
 
@@ -43,7 +43,7 @@ public class Pergunta {
         this.Alternativa3 = Alternativa3;
     }
 
-    public void setResposta(String Resposta) {
+    public void setResposta(int Resposta) {
         this.Resposta = Resposta;
     }
     

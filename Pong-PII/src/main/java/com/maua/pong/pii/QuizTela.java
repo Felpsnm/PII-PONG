@@ -91,7 +91,7 @@ public class QuizTela extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void alternativa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alternativa1ActionPerformed
-        if (Quiz.getAlternativa1() != Quiz.getResposta()) {
+        if (Quiz.getResposta() != 1) {
             if (Quiz.isPlayer() == true) {
                 Game.adicionarPontoPlayer2();
 
@@ -104,7 +104,7 @@ public class QuizTela extends javax.swing.JFrame {
     }//GEN-LAST:event_alternativa1ActionPerformed
 
     private void alternativa3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alternativa3ActionPerformed
-        if (Quiz.getAlternativa3() != Quiz.getResposta()) {
+        if (Quiz.getResposta() != 3) {
             if (Quiz.isPlayer() == true) {
                 Game.adicionarPontoPlayer2();
             } else {
@@ -116,7 +116,7 @@ public class QuizTela extends javax.swing.JFrame {
     }//GEN-LAST:event_alternativa3ActionPerformed
 
     private void alternativa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alternativa2ActionPerformed
-        if (Quiz.getAlternativa2() != Quiz.getResposta()) {
+        if (Quiz.getResposta() != 2) {
             if (Quiz.isPlayer() == true) {
                 Game.adicionarPontoPlayer2();
             } else {

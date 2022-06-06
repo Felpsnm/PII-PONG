@@ -15,11 +15,12 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private static int gameWidth, gameHeight, gameScale, gameWidthStaggered, gameHeightStaggered;
     private static int pontosPlayer;
     private static int pontosPlayer2;
-    private static String gameState = "MENU";
+    private static String gameState = "LOGIN";
     private static int freezeGame = 0;
 
     private static Player player, player2, enemy;
     private static Ball ball;
+    private static LoginTela loginTela;
     private static Menu menu;
     private static Quiz quiz;
     private static BufferedImage layer;
@@ -42,6 +43,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
         //Instanciando objetos
         layer = new BufferedImage(gameWidth, gameHeight, BufferedImage.TYPE_INT_RGB);
+        loginTela = new LoginTela();
         menu = new Menu();
         ball = new Ball(100, gameHeight / 2 - 1);
         player = new Player(100, gameHeight - 5, 0, Color.blue);
@@ -144,7 +146,6 @@ public class Game extends Canvas implements Runnable, KeyListener {
                 quiz.setPlayer2(true);
             }
         }
-        System.out.println("Player 1: " + getPontosPlayer() + " Player 2: " + getPontosPlayer2());
     }
 
     //Adicionar ponto Player
@@ -166,6 +167,12 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private void execTicks() {
         if (getFreezeGame() == 0) {
             switch (getGameState()) {
+                case "CLOSE" -> {
+                    System.exit(0);
+                }
+                case "LOGIN" -> {
+                    loginTela.setVisible(true);
+                }
                 case "MENU" -> {
                     menu.tick();
                     break;
