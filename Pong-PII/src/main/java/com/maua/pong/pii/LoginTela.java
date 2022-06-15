@@ -114,6 +114,7 @@ public class LoginTela extends javax.swing.JFrame {
             DAOLogin dao = new DAOLogin();
             if (dao.existe(usuario)) {
                 Game.setGameState("MENU");
+                Game.setLogin(login);
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Usuário inválido");
@@ -162,7 +163,7 @@ public class LoginTela extends javax.swing.JFrame {
             }
         });
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton confirmButton;
     private javax.swing.JButton exitButton;

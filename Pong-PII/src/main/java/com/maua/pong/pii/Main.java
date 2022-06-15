@@ -3,6 +3,7 @@ package com.maua.pong.pii;
 import javax.swing.JFrame;
 
 public class Main {
+
     public static Game game;
 
     public static void main(String[] args) {
@@ -16,9 +17,8 @@ public class Main {
         frame.setVisible(true);
         new Thread(game).start();
     }
-    
+
     public static void createGameInstance(int pontosPlayer, int pontosPlayer2) {
         game = new Game(pontosPlayer, pontosPlayer2);
-        
     }
 }

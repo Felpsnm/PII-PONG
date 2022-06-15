@@ -10,10 +10,9 @@ public class Ball {
     private double x, y, dx, dy;
     private final double speed;
     private final int width, height;
-    private int angle;   
+    private int angle;
     private Rectangle limites;
-    
-    
+
     //Construtor
     public Ball(int x, int y) {
         this.x = x;
@@ -21,17 +20,17 @@ public class Ball {
         this.width = 4;
         this.height = 4;
         this.speed = 1.7;
-        this.angle = new Random().nextInt(120 - 45);
+        this.angle = new Random().nextInt(75) + 25;
         this.dx = Math.cos(Math.toRadians(angle));
         this.dy = Math.sin(Math.toRadians(angle));
         colisaoBola();
     }
-    
+
     //Getters
     public double getX() {
         return x;
     }
-    
+
     public double getY() {
         return y;
     }
@@ -63,7 +62,7 @@ public class Ball {
     public Rectangle getLimites() {
         return limites;
     }
-    
+
     //Setters  
     public void setX(double x) {
         this.x = x;
@@ -76,7 +75,7 @@ public class Ball {
     public void setDx(double dx) {
         this.dx = dx;
     }
-    
+
     public void setDy(double dy) {
         this.dy = dy;
     }
@@ -84,11 +83,11 @@ public class Ball {
     public void setAngle(int angle) {
         this.angle = angle;
     }
-    
+
     public void setLimites(Rectangle limites) {
         this.limites = limites;
     }
-    
+
     private void colisaoBola() {
         setLimites(new Rectangle((int) (getX() + (getDx() * getSpeed())), (int) (getY() + (getDy() * getSpeed())), getWidth(), getHeight()));
     }

@@ -15,18 +15,18 @@ public class DAOPergunta {
         try (Connection conn = ConnectionFactory.obtemConexao(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, numero);
                 try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                String pergunta = rs.getString("Perguntas");
-                String alternativa1 = rs.getString("Alternativa1");
-                String alternativa2 = rs.getString("Alternativa2");
-                String alternativa3 = rs.getString("Alternativa3");
-                int resposta = rs.getInt("Resposta");
-                p.setPergunta(pergunta);
-                p.setAlternativa1(alternativa1);
-                p.setAlternativa2(alternativa2);
-                p.setAlternativa3(alternativa3);
-                p.setResposta(resposta);
-            }
+                    rs.next();
+                    String pergunta = rs.getString("Perguntas");
+                    String alternativa1 = rs.getString("Alternativa1");
+                    String alternativa2 = rs.getString("Alternativa2");
+                    String alternativa3 = rs.getString("Alternativa3");
+                    int resposta = rs.getInt("Resposta");
+                    p.setPergunta(pergunta);
+                    p.setAlternativa1(alternativa1);
+                    p.setAlternativa2(alternativa2);
+                    p.setAlternativa3(alternativa3);
+                    p.setResposta(resposta);
+                }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

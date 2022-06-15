@@ -16,11 +16,14 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private static int pontosPlayer;
     private static int pontosPlayer2;
     private static String gameState = "LOGIN";
+    //private static String gameState = "RANKING";
     private static int freezeGame = 0;
+    private static String login;
 
     private static Player player, player2, enemy;
     private static Ball ball;
     private static LoginTela loginTela;
+    private static RankingTela rankingTela;
     private static Menu menu;
     private static Quiz quiz;
     private static BufferedImage layer;
@@ -44,15 +47,21 @@ public class Game extends Canvas implements Runnable, KeyListener {
         //Instanciando objetos
         layer = new BufferedImage(gameWidth, gameHeight, BufferedImage.TYPE_INT_RGB);
         loginTela = new LoginTela();
+        rankingTela = new RankingTela();
+        quiz = new Quiz();
         menu = new Menu();
         ball = new Ball(100, gameHeight / 2 - 1);
         player = new Player(100, gameHeight - 5, 0, Color.blue);
         player2 = new Player(100, 0, 0, Color.yellow);
-        enemy = new Player(100, 0, 1, Color.red);
-        quiz = new Quiz();
+        enemy = new Player(100, 0, 1, Color.red);       
     }
 
     //Setters
+
+    public static void setLogin(String login) {
+        Game.login = login;
+    }
+        
     public static void setPontosPlayer(int pontosPlayer) {
         Game.pontosPlayer = pontosPlayer;
     }
@@ -70,6 +79,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
     }
 
     //Getters
+
+    public static String getLogin() {
+        return login;
+    }
+        
     public static int getPontosPlayer() {
         return pontosPlayer;
     }
@@ -112,15 +126,15 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
         //Colisões Gerais
         if (ball.getLimites().intersects(player.getLimites())) {
-            ball.setAngle(new Random().nextInt(120 - 45) + 46);
+            ball.setAngle(new Random().nextInt(70) + 60);
             ball.setDx(Math.cos(Math.toRadians(ball.getAngle())));
             ball.setDy(Math.sin(Math.toRadians(ball.getAngle())));
             if (ball.getDy() > 0) {
                 ball.setDy(ball.getDy() * -1);
             }
         }
-        if (ball.getLimites().intersects(enemy.getLimites()) || ball.getLimites().intersects(player2.getLimites())) {
-            ball.setAngle(new Random().nextInt(120 - 45) + 46);
+        if ((ball.getLimites().intersects(enemy.getLimites()) & getGameState() == "SINGLEPLAYER") || ball.getLimites().intersects(player2.getLimites())) {
+            ball.setAngle(new Random().nextInt(70) + 60);
             ball.setDx(Math.cos(Math.toRadians(ball.getAngle())));
             ball.setDy(Math.sin(Math.toRadians(ball.getAngle())));
             if (ball.getDy() < 0) {
@@ -131,19 +145,31 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
     //Verificação dos gols
     private void verificarGol() {
-        if (ball.getY() >= getGameHeight()) {
-            adicionarPontoPlayer2();
-            Main.createGameInstance(pontosPlayer, pontosPlayer2);
-            setFreezeGame(1);
-            quiz.renderizacaoQuiz();
-            quiz.setPlayer(true);
-        } else if (ball.getY() < 0) {
-            adicionarPontoPlayer();
-            Main.createGameInstance(pontosPlayer, pontosPlayer2);
-            setFreezeGame(1);
-            quiz.renderizacaoQuiz();
-            if (getGameState() == "COOP") {
-                quiz.setPlayer2(true);
+        if (getPontosPlayer() >= 5) {
+            DAORanking.inserirPontos(getPontosPlayer(), getLogin());
+            setGameState("RANKING");
+        } 
+        else if (getPontosPlayer2() >= 5 & getGameState() == "COOP") {
+            DAORanking.inserirPontos(getPontosPlayer2(), getLogin());
+            setGameState("RANKING");
+        } else if (getPontosPlayer2() >= 5) {
+            setGameState("RANKING");
+        }
+        else {
+            if (ball.getY() >= getGameHeight()) {
+                adicionarPontoPlayer2();
+                Main.createGameInstance(pontosPlayer, pontosPlayer2);
+                setFreezeGame(1);
+                quiz.renderizacaoQuiz();
+                quiz.setPlayer(true);
+            } else if (ball.getY() < 0) {
+                adicionarPontoPlayer();
+                Main.createGameInstance(pontosPlayer, pontosPlayer2);
+                setFreezeGame(1);
+                quiz.renderizacaoQuiz();
+                if (getGameState() == "COOP") {
+                    quiz.setPlayer2(true);
+                }
             }
         }
     }
@@ -169,9 +195,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
             switch (getGameState()) {
                 case "CLOSE" -> {
                     System.exit(0);
+                    break;
                 }
                 case "LOGIN" -> {
                     loginTela.setVisible(true);
+                    break;
                 }
                 case "MENU" -> {
                     menu.tick();
@@ -181,11 +209,17 @@ public class Game extends Canvas implements Runnable, KeyListener {
                     player.tick();
                     enemy.tick();
                     ball.tick();
+                    break;
                 }
                 case "COOP" -> {
                     player.tick();
                     player2.tick();
                     ball.tick();
+                    break;
+                }
+                case "RANKING" -> {
+                    rankingTela.setVisible(true);                    
+                    break;
                 }
             }
             verificarColisao();
